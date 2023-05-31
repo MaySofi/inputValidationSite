@@ -1,0 +1,35 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Error</title>
+    <style>
+        body {
+            background-color: pink;
+        }
+
+        .container {
+            text-align: center;
+            margin-top: 200px;
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            font-size: 16px;
+        }
+
+        input[type="submit"] {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #fff;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Error</h2>
+    <h3>Message {{ message }}</h3>
+</div>
+</body>
+</html>

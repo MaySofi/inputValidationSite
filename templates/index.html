@@ -1,0 +1,63 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>User Name Form</title>
+  <style>
+    body {
+      background-color: pink;
+    }
+
+    .container {
+      text-align: center;
+      margin-top: 200px;
+    }
+
+    input[type="text"] {
+      padding: 10px;
+      font-size: 16px;
+    }
+
+    input[type="submit"] {
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #fff;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+    <p id="query">Hello!</p>
+    <h2>Please enter your name:</h2>
+    <form method="post" action="{% url 'index' %}">
+        {% csrf_token %}
+        <label for="name"></label><input type="text" id="name" placeholder="Your Name" required>
+        <br><br>
+        <span id="error-message" style="color: red;"></span>
+        <input type="submit" value="Submit">
+        <h3>{{ message }} You have submitted {{ count }} times.</h3>
+    </form>
+</div>
+<script>
+    document.querySelector('form').addEventListener('submit', function (event) {
+        event.preventDefault();
+        let name = document.getElementById('name').value;
+        let errorMessage = document.getElementById('error-message');
+        // case 1:
+        //window.query.innerHTML = name === '' ? `Hello!` : name;
+
+        // case 2:
+        if (/[:<>'"!@#$%^&*()=\[\]]/.test(name))
+            errorMessage.textContent = "Invalid input. Please do not use these characters: : < > ' \" ! @ # $ % ^ & * ( ) [ ] =";
+        else {
+            window.query.innerHTML = name === '' ? `Hello!` : name;
+            errorMessage.textContent = '';
+        }
+    });
+</script>
+</body>
+</html>
+
