@@ -1,4 +1,3 @@
-{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -28,36 +27,63 @@
 </head>
 
 <body>
-
 <div class="container">
     <p id="query">Hello!</p>
     <h2>Please enter your name:</h2>
-    <form method="post" action="{% url 'index' %}">
+    <form id="name-form" method="post" action="{% url 'submit' %}">
         {% csrf_token %}
-        <label for="name"></label><input type="text" id="name" placeholder="Your Name" required>
+        <label for="name"></label><input type="text" id="name" name="name" placeholder="Your Name" required>
         <br><br>
         <span id="error-message" style="color: red;"></span>
+        <br><br>
         <input type="submit" value="Submit">
-        <h3>{{ message }} You have submitted {{ count }} times.</h3>
     </form>
 </div>
 <script>
-    document.querySelector('form').addEventListener('submit', function (event) {
+    document.getElementById('name-form').addEventListener('submit', function (event) {
         event.preventDefault();
         let name = document.getElementById('name').value;
         let errorMessage = document.getElementById('error-message');
-        // case 1:
-        //window.query.innerHTML = name === '' ? `Hello!` : name;
 
-        // case 2:
-        if (/[:<>'"!@#$%^&*()=\[\]]/.test(name))
+        if (/[:<>'"!@#$%^&*()=\[\]]/.test(name)) {
             errorMessage.textContent = "Invalid input. Please do not use these characters: : < > ' \" ! @ # $ % ^ & * ( ) [ ] =";
-        else {
+        } else {
             window.query.innerHTML = name === '' ? `Hello!` : name;
             errorMessage.textContent = '';
+
+            const csrfToken = document.getElementsByName("csrfmiddlewaretoken")[0].value;
+            const xhr = new XMLHttpRequest();
+            xhr.open("POST", "{% url 'submit' %}", true);
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            xhr.setRequestHeader("X-CSRFToken", csrfToken);
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                    const response = JSON.parse(xhr.responseText);
+                    if (response.success) {
+                        const count = response.count;
+                        const message = document.getElementById("message");
+                        message.textContent = "You have submitted " + count + " times.";
+                        errorMessage.textContent = "";
+                    } else {
+                        errorMessage.textContent = response.message;
+                    }
+                }
+            };
+            xhr.send("name=" + encodeURIComponent(name));
+
+            xhr.onload = function () {
+                const response = JSON.parse(xhr.responseText);
+                if (response.success) {
+                    const count = response.count;
+                    const message = document.getElementById("message");
+                    message.textContent = "You have submitted " + count + " times.";
+                    errorMessage.textContent = "";
+                } else {
+                    errorMessage.textContent = response.message;
+                }
+            };
         }
     });
 </script>
 </body>
 </html>
-

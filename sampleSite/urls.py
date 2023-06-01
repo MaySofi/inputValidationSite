@@ -1,7 +1,7 @@
 from django.urls import path
-from simpleSite.views import index
+from simpleSite import views
 
 urlpatterns = [
-    path('', index),
-    path('', index, name='index')
+    path('', views.index, name='index'),
+    path('submit', views.handle_submission, name='submit'),
 ]
