@@ -1,10 +1,11 @@
-from django.shortcuts import render
 import re
 import time
-from django.http import JsonResponse
 
-MAX_REQUESTS = 5  # Maximum number of requests allowed
-TIME_PERIOD = 60  # Time period in seconds
+from django.http import JsonResponse
+from django.shortcuts import render
+
+MAX_REQUESTS = 5
+TIME_PERIOD = 60
 request_counts = {}
 
 
@@ -25,7 +26,8 @@ def handle_submission(request):
             return JsonResponse({'success': False, 'message': 'Too many requests. Please try again later.'})
 
     if validate_input(user_input):
-        if user_identifier in request_counts and request_counts[user_identifier]["timestamp"] >= current_time - TIME_PERIOD:
+        if user_identifier in request_counts and request_counts[user_identifier]["timestamp"] >= \
+                current_time - TIME_PERIOD:
             request_counts[user_identifier]["count"] += 1
         else:
             request_counts[user_identifier] = {"count": 1, "timestamp": current_time}
@@ -33,7 +35,9 @@ def handle_submission(request):
         count = request_counts[user_identifier]["count"]
         return JsonResponse({'success': True, 'count': count})
     else:
-        return JsonResponse({'success': False, 'message': 'Invalid input. Please do not use these characters: < > ; : / \\ " { } [ ] ` ~ |'})
+        return JsonResponse({'success': False,
+                             'message':
+                                 'Invalid input. Please do not use these characters: < > ; : / \\ " { } [ ] ` ~ |'})
 
 
 def index(request):
